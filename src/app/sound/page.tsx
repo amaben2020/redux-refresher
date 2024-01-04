@@ -1,11 +1,8 @@
 "use client";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-// import ReactAudioPlayer from "react-audio-player";
-import { data } from "./../../data/data";
 
 const Sound = () => {
-  const [apiData, setData] = useState([...data]);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const MEDIA_URL =
     "https://course-material-dev.s3.us-east-2.amazonaws.com/audios/WPuufzJj6mLDH76.mp3/vL3F0oIDGfrqfFhTqRdEPlhTWiqAFNIUn0WOl64r.mp3";
@@ -14,7 +11,6 @@ const Sound = () => {
 
   useEffect(() => {
     const audioPlayback = new Audio(MEDIA_URL);
-
     audioPlayback.preload = "auto";
     audioRef.current = audioPlayback;
 
@@ -26,10 +22,14 @@ const Sound = () => {
     };
   }, []);
 
+  // enables play and pause
   const handlePlay = () => {
-    if (audioRef.current) {
-      audioRef.current.play();
-      audioRef.current = null;
+    if (audioRef.current && isPlaying) {
+      setIsPlaying(false);
+      audioRef.current.pause();
+    } else if (!isPlaying) {
+      setIsPlaying(true);
+      audioRef.current?.play();
     }
   };
 
@@ -37,30 +37,39 @@ const Sound = () => {
     <div>
       <h2>Sound </h2>
 
-      <button onClick={handlePlay}>Play</button>
-
-      <div>
-        {apiData?.map(({ image_url, title, media_url, id }) => {
-          return (
-            <div key={id}>
-              <h2>{title}</h2>
-              {image_url !== null && typeof image_url === "string" && (
-                <>
-                  <Image
-                    src={image_url}
-                    key={id}
-                    width={400}
-                    height={200}
-                    alt=""
-                  />
-                </>
-              )}
-
-              {/* <ReactAudioPlayer src={media_url} controls /> */}
-            </div>
-          );
-        })}
-      </div>
+      <button onClick={handlePlay}>
+        {isPlaying ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 5.25v13.5m-7.5-13.5v13.5"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+            />
+          </svg>
+        )}
+      </button>
     </div>
   );
 };
