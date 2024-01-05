@@ -30,34 +30,14 @@ function Settings() {
       category,
     });
 
-    console.log(apiUrl);
-
-    console.log(amount, type, difficulty, category);
-
-    console.log(
-      "https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple",
-    );
-
     setLoading(true);
     fetch(apiUrl)
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
         setQuestions(response.results);
         setLoading(false);
       });
   }, [amount, category, difficulty, type]);
-
-  // useEffect(() => {
-  //   handleQuestionsFetch();
-  // }, [
-  //   amount,
-  //   category,
-  //   difficulty,
-  //   handleQuestionsFetch,
-  //   setCategoryOptions,
-  //   type,
-  // ]);
 
   useEffect(() => {
     (async () => {
@@ -133,7 +113,7 @@ function Settings() {
       <input
         className="border-2 p-4 rounded-lg"
         type="number"
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={(e) => setAmount(Number(e.target.value))}
         placeholder="Amount"
       />
 
