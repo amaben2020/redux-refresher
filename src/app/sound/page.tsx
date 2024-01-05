@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
+import useSoundPlayer from "./hook/useSoundPlayer";
+const MEDIA_URL =
+  "https://course-material-dev.s3.us-east-2.amazonaws.com/audios/WPuufzJj6mLDH76.mp3/vL3F0oIDGfrqfFhTqRdEPlhTWiqAFNIUn0WOl64r.mp3";
 
 const Sound = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const MEDIA_URL =
-    "https://course-material-dev.s3.us-east-2.amazonaws.com/audios/WPuufzJj6mLDH76.mp3/vL3F0oIDGfrqfFhTqRdEPlhTWiqAFNIUn0WOl64r.mp3";
+  const { isPlaying: play, handlePlay: playMedia } =
+    useSoundPlayer<string>(MEDIA_URL);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -33,9 +35,17 @@ const Sound = () => {
     }
   };
 
+  const a2Ref = useRef<ElementRef<"audio">>(null);
+  console.log();
+  const handleA2Play = () => (a2Ref.current ? a2Ref.current.play() : null);
+
   return (
     <div>
       <h2>Sound </h2>
+
+      <button onClick={playMedia}>{play ? "PAUSE" : "PLAY"} </button>
+
+      <audio src={MEDIA_URL} ref={a2Ref} onClick={handleA2Play}></audio>
 
       <button onClick={handlePlay}>
         {isPlaying ? (
