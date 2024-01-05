@@ -1,4 +1,6 @@
 "use client";
+import { getProductAxios } from "@/services/api/products";
+import { getSales } from "@/services/api/sales";
 import { ChangeEvent, useEffect, useState } from "react";
 
 function Settings() {
@@ -12,13 +14,41 @@ function Settings() {
 
   const [loading, setLoading] = useState(false);
 
+  const [sales, setSales] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getSales();
+        setSales(data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getProductAxios();
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  console.log(sales);
+
   useEffect(() => {
     const apiUrl = `https://opentdb.com/api_category.php`;
     setLoading(true);
     fetch(apiUrl)
       .then((res) => res.json())
       .then((response) => {
-        setCategoryOptions(response.trivia_categories);
+        setCategoryOptions([
+          { id: "vevwe3", name: "Please select a category" },
+          ...response.trivia_categories,
+        ]);
         setLoading(false);
       });
   }, [setCategoryOptions]);

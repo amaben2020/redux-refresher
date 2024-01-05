@@ -6,12 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "backend": "json-server --watch db.json --port 5000 --delay=1000"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
+    "apexcharts": "^3.45.1",
+    "axios": "^1.6.4",
+    "concurrently": "^8.2.2",
+    "cypress": "^13.6.2",
+    "json-server": "^0.17.4",
+    "json-server-auth": "^2.1.0",
     "next": "14.0.4",
     "react": "^18",
+    "react-apexcharts": "^1.4.1",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18",
     "react-redux": "^9.0.4"
