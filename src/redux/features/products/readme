@@ -1,0 +1,24 @@
+const [sales, setSales] = useState(null);
+
+useEffect(() => {
+(async () => {
+try {
+const { data } = await getSales();
+setSales(data);
+} catch (error) {
+console.log(error);
+}
+})();
+}, []);
+
+useEffect(() => {
+(async () => {
+try {
+const { data } = await getProductAxios();
+} catch (error) {
+console.log(error);
+}
+})();
+}, []);
+
+console.log(sales);
