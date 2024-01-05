@@ -1,19 +1,14 @@
 "use client";
 import { buildUrl } from "@/helpers/buildUrl";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { useAppSelector } from "@/hooks/redux-hook";
 import { addQuestions } from "@/redux/features/quiz/quizSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 function Settings() {
-  const quiz = useAppSelector((state) => {
-    console.log("", state);
-    return state.quiz;
-  });
-  console.log(quiz.difficulty);
-  console.log(quiz.questions);
   const [categoryOptions, setCategoryOptions] = useState<
     {
       id: string;
@@ -21,7 +16,15 @@ function Settings() {
     }[]
   >([]);
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
+
+  const quiz = useAppSelector((state) => {
+    console.log("State", state);
+    return state.quiz;
+  });
+
+  console.log("Difficulty", quiz.difficulty);
+  console.log("Questions", quiz.questions);
 
   const [category, setCategory] = useState("9");
   const [questions, setQuestions] = useState([]);
@@ -50,7 +53,6 @@ function Settings() {
         setQuestions(response.results);
         dispatch(addQuestions({ difficulty, questions: response?.results }));
         setLoading(false);
-
         if (response.results?.length) {
           toast.success("Quiz session successfully created");
           setTimeout(() => {
@@ -64,7 +66,6 @@ function Settings() {
     (async () => {
       setLoading(true);
       const { data } = await axios.get("https://opentdb.com/api_category.php");
-
       setCategoryOptions([
         { id: "vevwe3", name: "Please select a category" },
         ...data.trivia_categories,

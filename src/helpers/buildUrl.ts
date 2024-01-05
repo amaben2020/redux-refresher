@@ -21,6 +21,6 @@ export const buildUrl = (options: TOptions) => {
   if (type) {
     url += `type=${type}`;
   }
-  console.log(url);
+
   return url;
 };
