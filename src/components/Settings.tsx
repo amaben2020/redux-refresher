@@ -1,15 +1,28 @@
 "use client";
 import { buildUrl } from "@/helpers/buildUrl";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux-hook";
+import { addQuestions } from "@/redux/features/quiz/quizSlice";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function Settings() {
+  const quiz = useAppSelector((state) => {
+    console.log("", state);
+    return state.quiz;
+  });
+  console.log(quiz.difficulty);
+  console.log(quiz.questions);
   const [categoryOptions, setCategoryOptions] = useState<
     {
       id: string;
       name: string;
     }[]
   >([]);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const [category, setCategory] = useState("9");
   const [questions, setQuestions] = useState([]);
   const [amount, setAmount] = useState<number>(10);
@@ -35,9 +48,17 @@ function Settings() {
       .then((res) => res.json())
       .then((response) => {
         setQuestions(response.results);
+        dispatch(addQuestions({ difficulty, questions: response?.results }));
         setLoading(false);
+
+        if (response.results?.length) {
+          toast.success("Quiz session successfully created");
+          setTimeout(() => {
+            router.push("/question");
+          }, 1000);
+        }
       });
-  }, [amount, category, difficulty, type]);
+  }, [amount, category, difficulty, dispatch, router, type]);
 
   useEffect(() => {
     (async () => {

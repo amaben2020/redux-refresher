@@ -1,10 +1,18 @@
 "use client";
+import { useAppSelector } from "@/hooks/redux-hook";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import useSoundPlayer from "./hook/useSoundPlayer";
 const MEDIA_URL =
   "https://course-material-dev.s3.us-east-2.amazonaws.com/audios/WPuufzJj6mLDH76.mp3/vL3F0oIDGfrqfFhTqRdEPlhTWiqAFNIUn0WOl64r.mp3";
 
 const Sound = () => {
+  const quiz = useAppSelector((state) => {
+    console.log(state);
+    return state.quiz;
+  });
+  console.log(quiz.difficulty);
+  console.log(quiz.questions);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const { isPlaying: play, handlePlay: playMedia } =
     useSoundPlayer<string>(MEDIA_URL);

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-// ...
+import quizReducer from "./features/quiz/quizSlice";
 
 export const store = configureStore({
   reducer: {
@@ -7,7 +7,8 @@ export const store = configureStore({
   },
 });
 
+// Infer the type of makeStore
+export type AppStore = ReturnType<typeof store.getState>;
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
