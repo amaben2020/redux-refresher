@@ -1,6 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface IInitialState {
+  questions?: any[];
+  progress?: number;
+  score?: number;
+  difficulty?: string;
+}
+const initialState: IInitialState = {
   questions: [],
   progress: 0,
   score: 0,
@@ -13,16 +19,20 @@ const quizSlice = createSlice({
   name: sliceName,
   initialState: initialState,
   reducers: {
-    addQuestions: (state, action: PayloadAction<any>) => {
+    addQuestions: (
+      state,
+      action: PayloadAction<Pick<IInitialState, "difficulty" | "questions">>,
+    ) => {
       state.difficulty = action.payload.difficulty;
       state.questions = action?.payload?.questions;
-      state.score = action.payload.score;
-      state.progress = action.payload.progress;
-      return state;
+    },
+
+    incrementScore: (state) => {
+      state.score += 1;
     },
   },
 });
 
-export const { addQuestions } = quizSlice.actions;
+export const { addQuestions, incrementScore } = quizSlice.actions;
 
 export default quizSlice.reducer;

@@ -51,7 +51,12 @@ function Settings() {
       .then((res) => res.json())
       .then((response) => {
         setQuestions(response.results);
-        dispatch(addQuestions({ difficulty, questions: response?.results }));
+        dispatch(
+          addQuestions({
+            difficulty,
+            questions: response?.results,
+          }),
+        );
         setLoading(false);
         if (response.results?.length) {
           toast.success("Quiz session successfully created");
