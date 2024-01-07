@@ -4,23 +4,18 @@ import Modal from "@/components/elements/modal";
 import { limitQuestion } from "@/helpers/limitQuestion";
 import { renderQuestionsRandomly } from "@/helpers/renderQuestionsRandomly";
 import { useAppDispatch } from "@/hooks/redux-hook";
-import { incrementScore } from "@/redux/features/quiz/quizSlice";
+import { incrementScore, resetScore } from "@/redux/features/quiz/quizSlice";
 import { RootState } from "@/redux/store";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { useCallback, useEffect, useId, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import sanitizeHtml from "sanitize-html";
-
-// ensure that only 1 question is shown per time ✅
-// make correct answer randomly appear with incorrect ones using random ✅
-// when answer is correct, update score by 1 ✅
-// use progress bar
-// click next after answer selection to move to next question, you cannot move back.
-
-//bugs:
-// 1. questions are still randomly sorted after selection
+import averageSVG from "./../../assets/average.svg";
+import failSVG from "./../../assets/fail.svg";
+import successSVG from "./../../assets/success.svg";
 
 const Question = () => {
   const [isClient, setIsClient] = useState(false);
@@ -67,8 +62,10 @@ const Question = () => {
     [dispatch, quiz?.questions?.length],
   );
 
+  const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     if (afterLastQuestion) {
+      setIsOpen(true);
     }
     if (lastQuestion) {
       // show a modal to play again or finish
@@ -90,6 +87,10 @@ const Question = () => {
     return null;
   }
 
+  const handleToggleModal = () => {
+    setIsOpen((p) => !p);
+  };
+
   return (
     <div className="p-20 border-2 justify-center flex flex-col items-center">
       <h3>Question</h3>
@@ -103,11 +104,32 @@ const Question = () => {
 
       {afterLastQuestion ? (
         grade === "pass" ? (
-          <Modal isOpen={true}> PASS SVG with score</Modal>
+          <Modal handleToggleModal={handleToggleModal} isOpen={isOpen}>
+            {" "}
+            <div>
+              PASS SVG with score
+              <Image src={successSVG} height={150} width={100} alt="" />
+              <button onClick={() => dispatch(resetScore())}>OK</button>
+            </div>
+          </Modal>
         ) : grade === "average" ? (
-          <Modal isOpen={true}> Average SVG with score</Modal>
+          <Modal
+            handleToggleModal={handleToggleModal}
+            src={averageSVG}
+            isOpen={isOpen}
+            alt=""
+          >
+            {" "}
+            Average SVG with score
+          </Modal>
         ) : (
-          <Modal isOpen={true}> Fail SVG with score and go to setting</Modal>
+          <Modal handleToggleModal={handleToggleModal} isOpen={isOpen}>
+            {" "}
+            <div>
+              <Image height={150} width={100} src={failSVG} alt="" />
+            </div>
+            Fail SVG with score and go to setting
+          </Modal>
         )
       ) : (
         <div>
