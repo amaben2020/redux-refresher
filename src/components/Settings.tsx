@@ -145,15 +145,14 @@ function Settings() {
       />
 
       <button
-        className="border-2 p-4 rounded-lg"
+        className="border-2 p-4 rounded-lg disabled:text-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:border-2 disabled:border-gray-300"
         onClick={async () => {
           await handleQuestionsFetch();
         }}
+        disabled={amount > 10}
       >
         Fetch Questions
       </button>
-
-      {JSON.stringify(questions)}
     </div>
   );
 }

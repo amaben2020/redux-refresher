@@ -14,7 +14,7 @@ import sanitizeHtml from "sanitize-html";
 
 // ensure that only 1 question is shown per time ✅
 // make correct answer randomly appear with incorrect ones using random ✅
-// when answer is correct, update score by 1
+// when answer is correct, update score by 1 ✅
 // use progress bar
 // click next after answer selection to move to next question, you cannot move back.
 
@@ -38,8 +38,13 @@ const Question = () => {
   }, [quiz.questions?.length, router]);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [grade, setGrade] = useState<"pass" | "average" | "fail">();
 
-  const finalQuestion = quiz?.questions?.length === currentQuestionIndex + 1;
+  // the last question for the user
+  const lastQuestion = quiz?.questions?.length === currentQuestionIndex + 1;
+
+  // displays after the user has finished answering all questions
+  const afterLastQuestion = currentQuestionIndex + 1 > quiz.questions?.length;
 
   const [selectedAnswer, setSelectedAnswer] = useState("");
 
@@ -49,7 +54,7 @@ const Question = () => {
     (isCorrect: boolean) => {
       if (isCorrect) {
         toast.success(`Selected answer is correct`);
-        dispatch(incrementScore());
+        dispatch(incrementScore(quiz?.questions?.length));
       } else {
         toast.error(`Selected answer is wrong`);
       }
@@ -58,8 +63,28 @@ const Question = () => {
         setSelectedAnswer("");
       }, 2000);
     },
-    [dispatch],
+    [dispatch, quiz?.questions?.length],
   );
+
+  useEffect(() => {
+    if (afterLastQuestion) {
+      alert("End");
+    }
+    if (lastQuestion) {
+      // show a modal to play again or finish
+      // if play again is selected, modal displays settings
+      // if finish is selected, modal displays svg based on grade
+      //set score to 0
+
+      if (quiz.score!! > 7) {
+        setGrade("pass");
+      } else if (quiz.score!! > 5 && quiz.score!! < 7) {
+        setGrade("average");
+      } else {
+        setGrade("fail");
+      }
+    }
+  }, [lastQuestion, quiz.score]);
 
   if (!isClient) {
     return null;
@@ -73,6 +98,8 @@ const Question = () => {
       <p>
         Score {Number(quiz.score)}/{quiz?.questions?.length}
       </p>
+
+      <p>{lastQuestion && <p> Grade : {grade} </p>}</p>
 
       <div>
         {limitQuestion(quiz?.questions, currentQuestionIndex).map(
@@ -110,7 +137,7 @@ const Question = () => {
                           } border-2 p-3 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:border-3 hover:border-gray-400`}
                           disabled={selectedAnswer.length > 0}
                         >
-                          {answer}
+                          {sanitizeHtml(answer)}
                         </button>
                       </>
                     );
@@ -122,16 +149,14 @@ const Question = () => {
         )}
         <button
           className="border-2 p-3 rounded-lg w-full mt-6 italic hover:bg-green-600 hover:border-white hover:text-white transition-all duration-200"
-          disabled={finalQuestion}
+          disabled={lastQuestion}
           onClick={() => {
             setCurrentQuestionIndex((p) => p + 1);
             // setSelectedAnswer("");
           }}
         >
-          {finalQuestion ? "Last" : "Next"} Question
+          {lastQuestion ? "Last" : "Next"} Question
         </button>
-
-        <p className="text-black text-lg"> {!selectedAnswer} </p>
       </div>
     </div>
   );
