@@ -3,6 +3,7 @@
 import { limitQuestion } from "@/helpers/limitQuestion";
 import { renderQuestionsRandomly } from "@/helpers/renderQuestionsRandomly";
 import { useAppDispatch } from "@/hooks/redux-hook";
+import { incrementScore } from "@/redux/features/quiz/quizSlice";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 
@@ -46,32 +47,19 @@ const Question = () => {
 
   const handleAnswer = useCallback(
     (isCorrect: boolean) => {
-      if (selectedAnswer.length) {
-        console.log("selectedAnswer", selectedAnswer);
-        toast.info(selectedAnswer);
-        if (isCorrect) {
-          // console.log(selectedAnswer);
-          // toast.success(`${selectedAnswer} is correct`);
-          // dispatch(incrementScore());
-          // setTimeout(() => {
-          //   // setCurrentQuestionIndex((p) => p + 1);
-          // }, 1200);
-        } else {
-          setTimeout(() => {
-            // setCurrentQuestionIndex((p) => p + 1);
-            // toast.error(`${String(selectedAnswer)} is wrong`);
-            // setSelectedAnswer("");
-          }, 1200);
-        }
+      if (isCorrect) {
+        toast.success(`Selected answer is correct`);
+        dispatch(incrementScore());
+      } else {
+        toast.error(`Selected answer is wrong`);
       }
+      setTimeout(() => {
+        setCurrentQuestionIndex((p) => p + 1);
+        setSelectedAnswer("");
+      }, 2000);
     },
-    [selectedAnswer],
+    [dispatch],
   );
-
-  const handleSelectAnswer = (answer: string) => {
-    console.log(answer);
-    setSelectedAnswer(answer);
-  };
 
   if (!isClient) {
     return null;
@@ -95,31 +83,34 @@ const Question = () => {
               </h4>
               <div className="flex flex-col gap-4 my-4">
                 {renderQuestionsRandomly(question, id)?.map(
-                  ({ question: answer, correct_answer, id }, index) => {
-                    const isCorrect = selectedAnswer === correct_answer;
+                  ({
+                    question: answer,
+                    correct_answer,
+                    correct_answer_text,
+                    id,
+                  }) => {
+                    const isCorrect = correct_answer;
+
                     return (
                       <>
                         <button
                           key={id}
-                          onClick={() => {
-                            handleSelectAnswer(answer);
-                            if (selectedAnswer.length > 0) {
-                              handleAnswer(isCorrect);
-                            }
+                          onClick={(e) => {
+                            setSelectedAnswer(e.target.textContent);
+                            handleAnswer(isCorrect);
                           }}
-                          className={`${
-                            isCorrect || correct_answer === answer
+                          className={`
+                          ${
+                            selectedAnswer.length && correct_answer_text
                               ? "bg-green-600"
                               : "bg-red-600"
-                          } ${
-                            !selectedAnswer && "bg-white"
-                          } border-2 p-3 rounded-lg disabled:cursor-not-allowed hover:bg-gray-200 hover:border-3 hover:border-gray-400`}
-                          // disabled={
-                          //   selectedAnswer.length > 0 &&
-                          //   selectedAnswer !== answer
-                          // }
+                          } 
+                          ${
+                            !selectedAnswer.length && "!bg-white"
+                          } border-2 p-3 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:border-3 hover:border-gray-400`}
+                          disabled={selectedAnswer.length > 0}
                         >
-                          {answer} {selectedAnswer}
+                          {answer}
                         </button>
                       </>
                     );
