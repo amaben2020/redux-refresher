@@ -1,5 +1,6 @@
 "use client";
 
+import Modal from "@/components/elements/modal";
 import { limitQuestion } from "@/helpers/limitQuestion";
 import { renderQuestionsRandomly } from "@/helpers/renderQuestionsRandomly";
 import { useAppDispatch } from "@/hooks/redux-hook";
@@ -68,7 +69,6 @@ const Question = () => {
 
   useEffect(() => {
     if (afterLastQuestion) {
-      alert("End");
     }
     if (lastQuestion) {
       // show a modal to play again or finish
@@ -101,31 +101,40 @@ const Question = () => {
 
       <p>{lastQuestion && <p> Grade : {grade} </p>}</p>
 
-      <div>
-        {limitQuestion(quiz?.questions, currentQuestionIndex).map(
-          (question, _) => (
-            <>
-              <h4>
-                {currentQuestionIndex + 1}. {sanitizeHtml(question.question)}
-              </h4>
-              <div className="flex flex-col gap-4 my-4">
-                {renderQuestionsRandomly(question, id)?.map(
-                  ({
-                    question: answer,
-                    correct_answer,
-                    correct_answer_text,
-                    id,
-                  }) => {
-                    const isCorrect = correct_answer;
+      {afterLastQuestion ? (
+        grade === "pass" ? (
+          <Modal isOpen={true}> PASS SVG with score</Modal>
+        ) : grade === "average" ? (
+          <Modal isOpen={true}> Average SVG with score</Modal>
+        ) : (
+          <Modal isOpen={true}> Fail SVG with score and go to setting</Modal>
+        )
+      ) : (
+        <div>
+          {limitQuestion(quiz?.questions, currentQuestionIndex).map(
+            (question, _) => (
+              <>
+                <h4>
+                  {currentQuestionIndex + 1}. {sanitizeHtml(question.question)}
+                </h4>
+                <div className="flex flex-col gap-4 my-4">
+                  {renderQuestionsRandomly(question, id)?.map(
+                    ({
+                      question: answer,
+                      correct_answer,
+                      correct_answer_text,
+                      id,
+                    }) => {
+                      const isCorrect = correct_answer;
 
-                    return (
-                      <button
-                        key={id}
-                        onClick={(e) => {
-                          setSelectedAnswer(e.target.textContent);
-                          handleAnswer(isCorrect);
-                        }}
-                        className={`
+                      return (
+                        <button
+                          key={id}
+                          onClick={(e) => {
+                            setSelectedAnswer(e.target.textContent);
+                            handleAnswer(isCorrect);
+                          }}
+                          className={`
                           ${
                             selectedAnswer.length && correct_answer_text
                               ? "bg-green-600"
@@ -134,28 +143,29 @@ const Question = () => {
                           ${
                             !selectedAnswer.length && "!bg-white"
                           } border-2 p-3 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:border-3 hover:border-gray-400`}
-                        disabled={selectedAnswer.length > 0}
-                      >
-                        {sanitizeHtml(answer)}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            </>
-          ),
-        )}
-        <button
-          className="border-2 p-3 rounded-lg w-full mt-6 italic hover:bg-green-600 hover:border-white hover:text-white transition-all duration-200"
-          disabled={lastQuestion}
-          onClick={() => {
-            setCurrentQuestionIndex((p) => p + 1);
-            // setSelectedAnswer("");
-          }}
-        >
-          {lastQuestion ? "Last" : "Next"} Question
-        </button>
-      </div>
+                          disabled={selectedAnswer.length > 0}
+                        >
+                          {sanitizeHtml(answer)}
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+              </>
+            ),
+          )}
+          <button
+            className="border-2 p-3 rounded-lg w-full mt-6 italic hover:bg-green-600 hover:border-white hover:text-white transition-all duration-200"
+            disabled={lastQuestion}
+            onClick={() => {
+              setCurrentQuestionIndex((p) => p + 1);
+              // setSelectedAnswer("");
+            }}
+          >
+            {lastQuestion ? "Last" : "Next"} Question
+          </button>
+        </div>
+      )}
     </div>
   );
 };

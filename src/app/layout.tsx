@@ -17,6 +17,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <ToastContainer />
 
+        <div id="portal"></div>
+
         <ReduxStoreProvider>{children}</ReduxStoreProvider>
       </body>
     </html>

@@ -1,4 +1,4 @@
-import Settings from "@/components/Settings";
+import Settings from "@/components/molecules/game-settings";
 
 export default function Home() {
   return (
