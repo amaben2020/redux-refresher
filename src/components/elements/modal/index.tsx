@@ -10,6 +10,7 @@ const Modal = ({
   children: ReactNode;
   handleToggleModal: () => void;
 }) => {
+  console.log(isOpen);
   if (!isOpen) {
     return null;
   }

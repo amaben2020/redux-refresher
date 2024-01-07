@@ -1,5 +1,3 @@
-import { shuffleArray } from "./shuffleArray";
-
 export const renderQuestionsRandomly = (question: any, id: string) => {
   const { correct_answer, incorrect_answers } = question;
 
@@ -20,7 +18,9 @@ export const renderQuestionsRandomly = (question: any, id: string) => {
 
   const allAnswers = [...incorrectAnswers, ...correctAnswer];
 
-  console.log("shuffleArray(questions)", shuffleArray(allAnswers));
+  console.log(allAnswers);
+
+  // console.log("shuffleArray(questions)", shuffleArray(allAnswers));
   // return shuffleArray(questions);
   return allAnswers;
 };

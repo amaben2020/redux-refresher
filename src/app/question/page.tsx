@@ -63,33 +63,53 @@ const Question = () => {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const computeScore = useCallback(() => {
+    const totalLength = quiz.questions?.length;
+    const totalScores = quiz.score;
+
+    return Number(totalScores!! / totalLength!!);
+  }, [quiz.questions?.length, quiz.score]);
+
   useEffect(() => {
-    if (afterLastQuestion) {
-      setIsOpen(true);
-    }
     if (lastQuestion) {
       // show a modal to play again or finish
       // if play again is selected, modal displays settings
       // if finish is selected, modal displays svg based on grade
       //set score to 0
 
-      if (quiz.score!! > 7) {
+      const computedScore = computeScore();
+      console.log(computeScore());
+
+      if (computedScore!! > 0.7) {
         setGrade("pass");
-      } else if (quiz.score!! > 5 && quiz.score!! < 7) {
+      } else if (computedScore!! > 0.5 && computedScore!! < 0.7) {
         setGrade("average");
-      } else {
+      } else if (computedScore < 0.5 && computedScore >= 0) {
         setGrade("fail");
       }
+
+      // if (quiz.score!! > 7) {
+      //   setGrade("pass");
+      // } else if (quiz.score!! > 5 && quiz.score!! < 7) {
+      //   setGrade("average");
+      // } else {
+      //   setGrade("fail");
+      // }
     }
-  }, [afterLastQuestion, lastQuestion, quiz.score]);
+  }, [afterLastQuestion, computeScore, lastQuestion, quiz.score]);
+
+  useEffect(() => {
+    if (afterLastQuestion && quiz.score!! > 0) {
+      setIsOpen(true);
+    }
+  }, [afterLastQuestion, quiz.score]);
 
   if (!isClient) {
     return null;
   }
 
-  const handleToggleModal = () => {
-    setIsOpen((p) => !p);
-  };
+  const handleToggleModal = () => setIsOpen((p) => !p);
 
   return (
     <div className="p-20 border-2 justify-center flex flex-col items-center">
@@ -176,16 +196,6 @@ const Question = () => {
               </>
             ),
           )}
-          <button
-            className="border-2 p-3 rounded-lg w-full mt-6 italic hover:bg-green-600 hover:border-white hover:text-white transition-all duration-200"
-            disabled={lastQuestion}
-            onClick={() => {
-              setCurrentQuestionIndex((p) => p + 1);
-              // setSelectedAnswer("");
-            }}
-          >
-            {lastQuestion ? "Last" : "Next"} Question
-          </button>
         </div>
       )}
     </div>
