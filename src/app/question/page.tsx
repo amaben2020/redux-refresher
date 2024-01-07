@@ -84,7 +84,7 @@ const Question = () => {
         setGrade("fail");
       }
     }
-  }, [lastQuestion, quiz.score]);
+  }, [afterLastQuestion, lastQuestion, quiz.score]);
 
   if (!isClient) {
     return null;
@@ -119,14 +119,13 @@ const Question = () => {
                     const isCorrect = correct_answer;
 
                     return (
-                      <>
-                        <button
-                          key={id}
-                          onClick={(e) => {
-                            setSelectedAnswer(e.target.textContent);
-                            handleAnswer(isCorrect);
-                          }}
-                          className={`
+                      <button
+                        key={id}
+                        onClick={(e) => {
+                          setSelectedAnswer(e.target.textContent);
+                          handleAnswer(isCorrect);
+                        }}
+                        className={`
                           ${
                             selectedAnswer.length && correct_answer_text
                               ? "bg-green-600"
@@ -135,11 +134,10 @@ const Question = () => {
                           ${
                             !selectedAnswer.length && "!bg-white"
                           } border-2 p-3 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:border-3 hover:border-gray-400`}
-                          disabled={selectedAnswer.length > 0}
-                        >
-                          {sanitizeHtml(answer)}
-                        </button>
-                      </>
+                        disabled={selectedAnswer.length > 0}
+                      >
+                        {sanitizeHtml(answer)}
+                      </button>
                     );
                   },
                 )}
