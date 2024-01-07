@@ -27,8 +27,13 @@ const quizSlice = createSlice({
       state.questions = action?.payload?.questions;
     },
 
-    incrementScore: (state) => {
-      state.score += 1;
+    incrementScore: (state, action: PayloadAction<number>) => {
+      if (Number(state.score) < action.payload) {
+        state.score!! += 1;
+      }
+      if (state.score === action.payload) {
+        state.score = action.payload;
+      }
     },
   },
 });
