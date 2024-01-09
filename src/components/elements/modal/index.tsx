@@ -17,7 +17,10 @@ const Modal = ({
   return createPortal(
     <div className={styles.modal}>
       <div className={styles.container}>
-        {children} <button onClick={handleToggleModal}>Close</button>
+        <button onClick={handleToggleModal} className={styles.close}>
+          Close
+        </button>
+        {children}
       </div>
     </div>,
     document.getElementById("portal"),

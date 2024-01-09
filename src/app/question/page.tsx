@@ -4,7 +4,11 @@ import Modal from "@/components/elements/modal";
 import { limitQuestion } from "@/helpers/limitQuestion";
 import { renderQuestionsRandomly } from "@/helpers/renderQuestionsRandomly";
 import { useAppDispatch } from "@/hooks/redux-hook";
-import { incrementScore, resetScore } from "@/redux/features/quiz/quizSlice";
+import {
+  incrementScore,
+  resetQuestions,
+  resetScore,
+} from "@/redux/features/quiz/quizSlice";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,7 +16,6 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import sanitizeHtml from "sanitize-html";
 import averageSVG from "./../../assets/average.svg";
 import failSVG from "./../../assets/fail.svg";
 import successSVG from "./../../assets/success.svg";
@@ -26,12 +29,6 @@ const Question = () => {
 
   const quiz = useSelector((state: RootState) => state.quiz);
   const router = useRouter();
-
-  useEffect(() => {
-    if (!quiz.questions?.length) {
-      router.push("/");
-    }
-  }, [quiz.questions?.length, router]);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [grade, setGrade] = useState<"pass" | "average" | "fail">();
@@ -105,6 +102,12 @@ const Question = () => {
     }
   }, [afterLastQuestion, quiz.score]);
 
+  useEffect(() => {
+    if (quiz.questions?.length === 0) {
+      router.push("/");
+    }
+  }, [quiz.questions?.length, router]);
+
   if (!isClient) {
     return null;
   }
@@ -120,6 +123,18 @@ const Question = () => {
         Score {Number(quiz.score)}/{quiz?.questions?.length}
       </p>
 
+      <div>
+        <button
+          onClick={() => {
+            dispatch(resetScore());
+            router.push("/");
+          }}
+        >
+          {" "}
+          Reset Game
+        </button>
+      </div>
+
       <p>{lastQuestion && <p> Grade : {grade} </p>}</p>
 
       {afterLastQuestion ? (
@@ -129,17 +144,22 @@ const Question = () => {
             <div>
               PASS SVG with score
               <Image src={successSVG} height={150} width={100} alt="" />
-              <button onClick={() => dispatch(resetScore())}>OK</button>
+              <button
+                onClick={() => {
+                  dispatch(resetScore());
+                  dispatch(resetQuestions());
+                }}
+              >
+                Try Again
+              </button>
             </div>
           </Modal>
         ) : grade === "average" ? (
-          <Modal
-            handleToggleModal={handleToggleModal}
-            src={averageSVG}
-            isOpen={isOpen}
-            alt=""
-          >
+          <Modal handleToggleModal={handleToggleModal} isOpen={isOpen} alt="">
             {" "}
+            <div>
+              <Image height={150} width={100} src={averageSVG} alt="" />
+            </div>
             Average SVG with score
           </Modal>
         ) : (
@@ -157,7 +177,8 @@ const Question = () => {
             (question, _) => (
               <>
                 <h4>
-                  {currentQuestionIndex + 1}. {sanitizeHtml(question.question)}
+                  {/* {currentQuestionIndex + 1}. {sanitizeHtml(question.question)} */}
+                  {currentQuestionIndex + 1}. {question.question}
                 </h4>
                 <div className="flex flex-col gap-4 my-4">
                   {renderQuestionsRandomly(question, id)?.map(
@@ -167,6 +188,7 @@ const Question = () => {
                       correct_answer_text,
                       id,
                     }) => {
+                      console.log(answer);
                       const isCorrect = correct_answer;
 
                       return (
@@ -187,7 +209,8 @@ const Question = () => {
                           } border-2 p-3 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:border-3 hover:border-gray-400`}
                           disabled={selectedAnswer.length > 0}
                         >
-                          {sanitizeHtml(answer)}
+                          {/* {sanitizeHtml(answer)} */}
+                          {answer}
                         </button>
                       );
                     },

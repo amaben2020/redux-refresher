@@ -36,12 +36,17 @@ const quizSlice = createSlice({
       }
     },
 
+    resetQuestions: (state) => {
+      state.questions = [];
+    },
+
     resetScore: (state) => {
       state.score = 0;
     },
   },
 });
 
-export const { addQuestions, incrementScore, resetScore } = quizSlice.actions;
+export const { addQuestions, incrementScore, resetScore, resetQuestions } =
+  quizSlice.actions;
 
 export default quizSlice.reducer;
