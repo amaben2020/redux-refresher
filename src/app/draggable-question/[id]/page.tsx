@@ -4,7 +4,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { currentQuestion } from "../data/data";
-
+import correctSound from "./../../../../public/audios/correct.mp3";
+import wrongSound from "./../../../../public/audios/notCorrect.mp3";
 interface ItemType {
   id: number;
   name: string;
@@ -26,10 +27,18 @@ const BasicFunction: FC = (props) => {
   }));
   console.log(question);
   const [state, setState] = useState<ItemType[]>([...question]);
+  const [isActive, setIsActive] = useState<number | undefined>();
 
-  console.log(state);
+  const correctAnswers: ItemType[] = [
+    { id: 6, name: "N'anya" },
+    { id: 2, name: "gi" },
+    { id: 1, name: "a" },
+    { id: 5, name: "gaghị" },
+    { id: 4, name: "emekata" },
+    { id: 3, name: "mehie." },
+  ];
 
-  console.log(options[0].media_url);
+  const [answers, setAnswers] = useState<ItemType[]>([]);
 
   useEffect(() => {
     const audioPlayback = new Audio(options[0].media_url);
@@ -49,9 +58,45 @@ const BasicFunction: FC = (props) => {
       soundRef.current?.play();
     }
   };
-  const handleCheckAnswer = () => {};
-  const handleSelectedAnswer = () => {};
-  const handleRemoveAnswer = () => {};
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const correctPlayback = useRef<HTMLAudioElement | null>();
+  const handleCheckAnswer = (array1: ItemType[], array2: ItemType[]) => {
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i].id !== array2[i].id || array1[i].name !== array2[i].name) {
+        setIsCorrect(false);
+      } else {
+        setIsCorrect(true);
+      }
+    }
+
+    const correctAudio = new Audio(isCorrect ? correctSound : wrongSound);
+    correctPlayback.current = correctAudio;
+
+    correctPlayback.current.play();
+  };
+
+  const handleSelectAnswers = (answer: ItemType) => {
+    const answerAvailable = answers.find((item) => item.id === answer.id);
+
+    if (answerAvailable?.id) {
+      const updatedState = [...state, answerAvailable];
+      const updatedAnswers = [...answers].filter(
+        (elem) => elem.id !== answerAvailable.id,
+      );
+      setState(updatedState);
+      setAnswers(updatedAnswers);
+    } else {
+      const updateAnswersAndState = [...state];
+      const updatedState = updateAnswersAndState.filter(
+        (elem) => elem.id !== answer.id,
+      );
+
+      const updatedAnswers = [...answers, answer];
+      setState(updatedState);
+      setAnswers(updatedAnswers);
+    }
+  };
 
   return (
     <div className="p-10">
@@ -71,22 +116,60 @@ const BasicFunction: FC = (props) => {
           />
         </svg>
       </button>
-      <ReactSortable
-        list={state}
-        setList={setState}
-        group="groupName"
-        animation={200}
-        delay={2}
-        filter=".addImageButtonContainer"
-        className="flex"
-      >
+
+      <div className="py-4">
+        <h3> Answers: </h3>
+
+        <div className=" border-gray-700 w-fit">
+          <ReactSortable
+            list={answers}
+            setList={setAnswers}
+            group="groupName"
+            animation={200}
+            delay={2}
+            filter=".addImageButtonContainer"
+            className="flex"
+            onRemove={() => {
+              setAnswers([]);
+            }}
+          >
+            {answers.map((item) => (
+              <div
+                style={{
+                  border: isActive === item.id ? "1px solid green" : "",
+                }}
+                onClick={() => handleSelectAnswers(item)}
+                className="border p-3 rounded-lg m-3 cursor-pointer"
+                key={item.id}
+              >
+                {item.name}
+              </div>
+            ))}
+          </ReactSortable>{" "}
+        </div>
+      </div>
+
+      <div className="border-t-2 border-gray-700 w-fit flex">
         {state.map((item) => (
-          <div className="border p-3 rounded-lg m-3" key={item.id}>
+          <div
+            className="border p-3 rounded-lg m-3 cursor-pointer"
+            onClick={() => handleSelectAnswers(item)}
+            key={item.id}
+          >
             {item.name}
           </div>
         ))}
-      </ReactSortable>{" "}
-      <button className="border p-3 rounded-lg my-3">Check Answer</button>
+      </div>
+
+      <button
+        style={{
+          background: isCorrect ? "green" : "",
+        }}
+        onClick={() => handleCheckAnswer(answers, correctAnswers)}
+        className="border p-3 rounded-lg my-3"
+      >
+        Check Answer {isCorrect ? "yeah" : "nope"}
+      </button>
     </div>
   );
 };
