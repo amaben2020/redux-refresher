@@ -59,6 +59,7 @@ const BasicFunction: FC = (props) => {
     }
   };
   const [isCorrect, setIsCorrect] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   const correctPlayback = useRef<HTMLAudioElement | null>();
   const handleCheckAnswer = (array1: ItemType[], array2: ItemType[]) => {
@@ -69,12 +70,28 @@ const BasicFunction: FC = (props) => {
         setIsCorrect(true);
       }
     }
-
-    const correctAudio = new Audio(isCorrect ? correctSound : wrongSound);
-    correctPlayback.current = correctAudio;
+    console.log(isCorrect);
+    const audioPlayback = new Audio(isCorrect ? correctSound : wrongSound);
+    correctPlayback.current = audioPlayback;
 
     correctPlayback.current.play();
   };
+
+  useEffect(() => {
+    if (isChecking) {
+      setTimeout(() => {
+        setIsChecking(false);
+      }, 1000);
+    }
+
+    if (isCorrect) {
+      setTimeout(() => {
+        setIsCorrect(false);
+        setAnswers([]);
+        setState([...question]);
+      }, 2000);
+    }
+  }, [isChecking, isCorrect, question]);
 
   const handleSelectAnswers = (answer: ItemType) => {
     const answerAvailable = answers.find((item) => item.id === answer.id);
@@ -163,12 +180,20 @@ const BasicFunction: FC = (props) => {
 
       <button
         style={{
-          background: isCorrect ? "green" : "",
+          background:
+            isChecking && isCorrect
+              ? "green"
+              : isChecking && !isCorrect
+              ? "red"
+              : "",
         }}
-        onClick={() => handleCheckAnswer(answers, correctAnswers)}
+        onClick={() => {
+          handleCheckAnswer(answers, correctAnswers);
+          setIsChecking(true);
+        }}
         className="border p-3 rounded-lg my-3"
       >
-        Check Answer {isCorrect ? "yeah" : "nope"}
+        Check Answer
       </button>
     </div>
   );
