@@ -1,42 +1,28 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
-import { currentQuestion } from "../data/data";
+import { correctAnswers, currentQuestion } from "../data/data";
 import correctSound from "./../../../../public/audios/correct.mp3";
 import wrongSound from "./../../../../public/audios/notCorrect.mp3";
-interface ItemType {
+export interface ItemType {
   id: number;
   name: string;
 }
 
 const BasicFunction: FC = (props) => {
   const soundRef = useRef<HTMLAudioElement | null>(null);
-
   const options = currentQuestion.options;
-  const params = useParams();
-  console.log(params);
-  const query = useSearchParams();
-  console.log(query.get("langId"));
-  console.log(options);
+  // const params = useParams();
+  // const query = useSearchParams();
 
   const question = options[0].title.map((t, i) => ({
     id: i + 1,
     name: t,
   }));
-  console.log(question);
+
   const [state, setState] = useState<ItemType[]>([...question]);
   const [isActive, setIsActive] = useState<number | undefined>();
-
-  const correctAnswers: ItemType[] = [
-    { id: 6, name: "N'anya" },
-    { id: 2, name: "gi" },
-    { id: 1, name: "a" },
-    { id: 5, name: "gaghị" },
-    { id: 4, name: "emekata" },
-    { id: 3, name: "mehie." },
-  ];
 
   const [answers, setAnswers] = useState<ItemType[]>([]);
 

@@ -1,3 +1,5 @@
+import { ItemType } from "../[id]/page";
+
 export const currentQuestion = {
   id: "b489af6b-71be-4a09-9544-16e5a3cc8cf2",
   title: "I will never do wrong to you.",
@@ -46,3 +48,12 @@ export const currentQuestion = {
     },
   ],
 };
+
+export const correctAnswers: ItemType[] = [
+  { id: 6, name: "N'anya" },
+  { id: 2, name: "gi" },
+  { id: 1, name: "a" },
+  { id: 5, name: "gaghị" },
+  { id: 4, name: "emekata" },
+  { id: 3, name: "mehie." },
+];
