@@ -29,13 +29,14 @@ export const fetchUsersData = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    setUser: () => {},
-    logoutUser: () => {},
-    setStudent: () => {},
-    logoutStudent: () => {},
-  },
+  // reducers: {
+  //   setUser: () => {},
+  //   logoutUser: () => {},
+  //   setStudent: () => {},
+  //   logoutStudent: () => {},
+  // },
 
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsersData.pending, (state) => {

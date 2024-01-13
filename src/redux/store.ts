@@ -10,6 +10,7 @@ import {
   persistStore,
 } from "redux-persist";
 import sessionStorage from "redux-persist/lib/storage/session";
+import authSlice from "./../../../redux-refresher/src/app/auth/features/user";
 import quizSlice from "./features/quiz/quizSlice";
 
 const persistConfig = {
@@ -20,6 +21,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   quiz: quizSlice,
+  auth: authSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
