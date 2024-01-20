@@ -2,7 +2,7 @@
 import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsersData } from "./features/user";
+import { fetchUsersData } from "./features/api/fetchUser";
 
 const AuthPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -13,7 +13,6 @@ const AuthPage = () => {
   const id = 10;
   const dispatch = useDispatch();
   const state = useSelector((state: RootState) => state.auth);
-  console.log(state);
 
   useEffect(() => {
     dispatch(fetchUsersData(id));

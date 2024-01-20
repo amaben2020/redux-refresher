@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchUsers } from "../services/api/users";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchUsersData } from "./api/fetchUser";
 
 type TUserData = {
   data: null;
@@ -15,16 +15,6 @@ const initialState: TUserData = {
   status: "loading",
   error: "",
 };
-
-// asynchronous function with createAsyncThunk
-export const fetchUsersData = createAsyncThunk(
-  "user/fetchUsersData",
-  async (amount: number) => {
-    // any api service
-    const response = await fetchUsers(amount);
-    return response.data;
-  },
-);
 
 const userSlice = createSlice({
   name: "user",
