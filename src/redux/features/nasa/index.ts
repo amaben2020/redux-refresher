@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { nasaThunk } from "./services";
 
-type TNasaState = {
+export type TNasaState = {
   data: {
     date: string;
     explanation: string;
@@ -29,7 +29,6 @@ const nasaSlice = createSlice({
       state.loading = "pending";
     });
     builder.addCase(nasaThunk.fulfilled, (state, action) => {
-      console.log("action.payload", action.payload);
       state.data = action.payload;
       state.loading = "idle";
       state.error = "null";
