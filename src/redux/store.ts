@@ -11,6 +11,7 @@ import {
 } from "redux-persist";
 import sessionStorage from "redux-persist/lib/storage/session";
 import authSlice from "./../../../redux-refresher/src/app/auth/features/user";
+import nasaSlice from "./features/nasa/index";
 import quizSlice from "./features/quiz/quizSlice";
 import salesSlice from "./features/sales/index";
 const persistConfig = {
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   quiz: quizSlice,
   auth: authSlice,
   sales: salesSlice,
+  nasa: nasaSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
